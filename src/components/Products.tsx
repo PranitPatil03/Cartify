@@ -1,7 +1,21 @@
-import { product } from "@/types/types";
-import { products } from "@/utils/data";
+import toast from "react-hot-toast";
+import { product } from "../types/types";
+import { products } from "../utils/data";
+import { useCart } from "../context/CartContext";
+import { Button } from "./ui/button";
 
 export const ProductCard = ({ product }: { product: product }) => {
+  const { addToCart, cartItems } = useCart();
+
+  const isInCart = cartItems.some((item) => item.id === product.id);
+
+  const handleAddToCart = () => {
+    if (!isInCart) {
+      addToCart(product);
+      toast.success(`${product.name} added to cart!`);
+    }
+  };
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm">
       <img
@@ -12,9 +26,17 @@ export const ProductCard = ({ product }: { product: product }) => {
       <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
       <p className="text-gray-600 mb-2">₹{product.price}</p>
       <p className="text-sm text-gray-500 mb-4">{product.description}</p>
-      <button className="w-full bg-gray-100 text-gray-800 py-2 rounded hover:bg-gray-200 transition-colors">
-        {product.isCart ? "Added to cart" : "Add to cart"}
-      </button>
+      <Button
+        className={`w-full py-2 rounded transition-colors ${
+          isInCart
+            ? "bg-gray-200 text-gray-600 cursor-not-allowed"
+            : ""
+        }`}
+        onClick={handleAddToCart}
+        disabled={isInCart}
+      >
+        {isInCart ? "Added to cart" : "Add to cart"}
+      </Button>
     </div>
   );
 };

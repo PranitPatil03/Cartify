@@ -4,7 +4,7 @@ import { ProductGrid } from "@/components/Products";
 const ProductList = () => {
   return (
     <>
-      <div className="">
+      <div>
         <Header></Header>
         <ProductGrid></ProductGrid>
       </div>

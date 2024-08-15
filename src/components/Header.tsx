@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { logoDark } from "@/assets";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { logoDark } from "../assets";
+import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 import { Layers, ShoppingCart, User, Menu } from "lucide-react";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const { cartItems } = useCart();
 
   return (
     <header className="w-full bg-white shadow-sm">
@@ -25,8 +28,12 @@ export const Header = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            <NavItem icon={<Layers size={20} />} text="Orders" />
-            <NavItem icon={<ShoppingCart size={20} />} text="Cart" />
+            <NavItem icon={<Layers size={20} />} text="Orders" link="orders" />
+            <NavItem
+              icon={<ShoppingCart size={20} />}
+              text={`Cart (${cartItems.length})`}
+              link="cart"
+            />
             <Button>
               <User size={20} className="mr-2" />
               Profile
@@ -49,8 +56,12 @@ export const Header = () => {
               placeholder="Search..."
               className="w-full mb-2"
             />
-            <NavItem icon={<Layers size={20} />} text="Orders" />
-            <NavItem icon={<ShoppingCart size={20} />} text="Cart" />
+            <NavItem icon={<Layers size={20} />} text="Orders" link="orders"/>
+            <NavItem
+              icon={<ShoppingCart size={20} />}
+              text={`Cart (${cartItems.length})`}
+              link="cart"
+            />
             <Button className="font-mono">
               <User size={20} className="mr-2" />
               Profile
@@ -65,11 +76,15 @@ export const Header = () => {
 type NavItemProps = {
   icon: React.ReactNode;
   text: string;
+  link?: string;
 };
 
-const NavItem = ({ icon, text }: NavItemProps) => (
-  <a href="#" className="flex items-center text-gray-600 text-gray-900">
+const NavItem = ({ icon, text, link }: NavItemProps) => (
+  <Link
+    to={`/${link}`}
+    className="flex items-center text-gray-600 text-gray-900"
+  >
     {icon}
     <span className="ml-1 font-mono">{text}</span>
-  </a>
+  </Link>
 );
