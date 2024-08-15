@@ -4,4 +4,5 @@ export interface product {
   price: number;
   description: string;
   image: string;
+  isCart: boolean;
 }

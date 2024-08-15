@@ -1,12 +1,12 @@
 import { Header } from "@/components/Header";
-import Products from "@/components/Products";
+import { ProductGrid } from "@/components/Products";
 
 const ProductList = () => {
   return (
     <>
       <div className="">
         <Header></Header>
-        <Products></Products>
+        <ProductGrid></ProductGrid>
       </div>
     </>
   );
