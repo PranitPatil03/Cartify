@@ -16,11 +16,12 @@ const CartPage: React.FC = () => {
   const calculateSubtotal = () =>
     cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const calculateTotal = () => {
+  const calculateTotalAfterDiscount = () => {
     const subtotal = calculateSubtotal();
     const shipping = 100.0;
     const tax = subtotal * 0.0832;
-    return subtotal + shipping + tax;
+    const discount=subtotal * 0.1
+    return (subtotal + shipping + tax) - discount;
   };
 
   return (
@@ -32,7 +33,7 @@ const CartPage: React.FC = () => {
             cartItems.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between py-4 border-b border-gray-200"
+                className="md:flex items-center justify-between py-4 border-b border-gray-200"
               >
                 <div className="flex items-center space-x-4">
                   <img
@@ -52,7 +53,7 @@ const CartPage: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-end justify-end space-x-2">
                   <Select
                     value={item.quantity.toString()}
                     onValueChange={(value) =>
@@ -92,20 +93,39 @@ const CartPage: React.FC = () => {
             <h2 className="text-lg font-medium">Order summary</h2>
             <div className="mt-4">
               <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span> ₹{calculateSubtotal().toFixed(2)}</span>
+                <span className="px-3 py-2">Subtotal</span>
+                <span className="px-3 py-2 rounded-xl">
+                  {" "}
+                  ₹{calculateSubtotal().toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between mt-2">
-                <span>Shipping estimate</span>
-                <span> ₹5.00</span>
+                <span className="px-3 py-2">Shipping estimate</span>
+                <span className="px-3 py-2 rounded-xl ">₹100</span>
               </div>
               <div className="flex justify-between mt-2">
-                <span>Tax estimate</span>
-                <span> ₹{(calculateSubtotal() * 0.0832).toFixed(2)}</span>
+                <span className="px-3 py-2">Tax estimate</span>
+                <span className="px-3 py-2 rounded-xl ">
+                  {" "}
+                  ₹{(calculateSubtotal() * 0.0832).toFixed(2)}
+                </span>
               </div>
-              <div className="flex justify-between mt-4 text-lg font-medium">
-                <span>Order total</span>
-                <span> ₹{calculateTotal().toFixed(2)}</span>
+              <div className="flex justify-between">
+                <span className="px-3 py-2">
+                  Total Discount <span className="text-sm">(10% off)</span>
+                </span>
+                <span className="px-3 py-2 rounded-xl">
+                {" "}
+                ₹{(Number(calculateSubtotal().toFixed(2)) * 0.1).toFixed(2)}
+                </span>
+              </div>
+              <hr className="border w-full mt-2"></hr>
+              <div className="flex justify-between mt-2 text-lg font-medium">
+                <span className="px-3 py-2">Order total cost</span>
+                <span className="px-3 py-2 rounded-xl">
+                  {" "}
+                  ₹{calculateTotalAfterDiscount().toFixed(2)}
+                </span>
               </div>
               <Button className="mt-6 w-full text-white py-2 rounded-lg ">
                 Checkout
