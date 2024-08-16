@@ -1,32 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
+import { CartContextType, CartItem, Order } from "@/types/types";
 import React, { createContext, useContext, useState, useEffect } from "react";
-
-interface CartItem {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  mrp: number;
-  image: string;
-  quantity: number;
-}
-
-interface Order {
-  id: string;
-  items: CartItem[];
-  totalAmount: number;
-  date: Date;
-}
-
-interface CartContextType {
-  cartItems: CartItem[];
-  orders: Order[];
-  addToCart: (item: CartItem) => void;
-  removeFromCart: (id: string) => void;
-  updateQuantity: (id: string, quantity: number) => void;
-  clearCart: () => void;
-  createOrder: () => void;
-}
+import { generateOrderId } from "@/utils/utils";
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -64,7 +39,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
       const existingItem = prevItems.find((i) => i.id === item.id);
       if (existingItem) {
         return prevItems.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === item.id ? { ...i, quantity: (i.quantity ?? 0) + 1 } : i
         );
       }
       return [...prevItems, { ...item, quantity: 1 }];
@@ -88,10 +63,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const createOrder = () => {
     const order: Order = {
-      id: new Date().toISOString(),
+      id: generateOrderId(),
       items: cartItems,
       totalAmount: cartItems.reduce(
-        (sum, item) => sum + item.price * item.quantity,
+        (sum, item) => sum + item.price * (item.quantity ?? 0),
         0
       ),
       date: new Date(),

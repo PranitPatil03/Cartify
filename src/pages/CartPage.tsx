@@ -14,7 +14,7 @@ const CartPage: React.FC = () => {
   const { cartItems, updateQuantity, removeFromCart, createOrder } = useCart();
 
   const calculateSubtotal = () =>
-    cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    cartItems.reduce((sum, item) => sum + item.price * (item.quantity ?? 0), 0);
 
   const calculateTotalAfterDiscount = () => {
     const subtotal = calculateSubtotal();
@@ -64,7 +64,7 @@ const CartPage: React.FC = () => {
                 </div>
                 <div className="flex items-end justify-end space-x-2">
                   <Select
-                    value={item.quantity.toString()}
+                    value={(item.quantity ?? 0).toString()}
                     onValueChange={(value) =>
                       updateQuantity(item.id, parseInt(value))
                     }

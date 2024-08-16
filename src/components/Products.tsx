@@ -1,10 +1,10 @@
 import toast from "react-hot-toast";
-import { product } from "../types/types";
+import { CartItem } from "../types/types";
 import { products } from "../utils/data";
 import { useCart } from "../context/CartContext";
 import { Button } from "./ui/button";
 
-export const ProductCard = ({ product }: { product: product }) => {
+export const ProductCard = ({ product }: { product: CartItem }) => {
   const { addToCart, cartItems } = useCart();
 
   const isInCart = cartItems.some((item) => item.id === product.id);

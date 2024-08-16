@@ -50,7 +50,7 @@ const OrderPage: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-lg font-semibold font-mono">
-                    ₹{(item.price * item.quantity).toFixed(2)}
+                    ₹{(item.price * (item.quantity ?? 0)).toFixed(2)}
                   </div>
                 </div>
               ))}
