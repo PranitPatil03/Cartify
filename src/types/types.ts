@@ -5,4 +5,5 @@ export interface product {
   description: string;
   image: string;
   isCart: boolean;
+  mrp: number;
 }

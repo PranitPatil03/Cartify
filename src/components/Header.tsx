@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { logoDark } from "../assets";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { Layers, ShoppingCart, User, Menu } from "lucide-react";
+import { Layers, ShoppingCart, Menu, Package } from "lucide-react";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -16,28 +16,28 @@ export const Header = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-4">
             <img src={logoDark} alt="logo" className="h-8 w-auto" />
-            <p className="font-mono text-2xl font-medium">cartify</p>
+            <p className="font-serif text-2xl font-medium">cartify</p>
           </div>
 
-          <div className="flex-grow hidden md:flex justify-center p-5">
+          {/* <div className="flex-grow hidden md:flex justify-center p-5">
             <Input
               type="text"
               placeholder="Search a product..."
               className="w-5/6"
             />
-          </div>
+          </div> */}
 
           <div className="hidden md:flex items-center space-x-4">
-            <NavItem icon={<Layers size={20} />} text="Orders" link="orders" />
+            <NavItem icon={<Package size={20} />} text="Orders" link="orders" />
             <NavItem
               icon={<ShoppingCart size={20} />}
               text={`Cart (${cartItems.length})`}
               link="cart"
             />
-            <Button>
+            {/* <Button>
               <User size={20} className="mr-2" />
               Profile
-            </Button>
+            </Button> */}
           </div>
 
           <div className="md:hidden">
@@ -56,16 +56,16 @@ export const Header = () => {
               placeholder="Search..."
               className="w-full mb-2"
             />
-            <NavItem icon={<Layers size={20} />} text="Orders" link="orders"/>
+            <NavItem icon={<Layers size={20} />} text="Orders" link="orders" />
             <NavItem
               icon={<ShoppingCart size={20} />}
               text={`Cart (${cartItems.length})`}
               link="cart"
             />
-            <Button className="font-mono">
+            {/* <Button className="font-serif">
               <User size={20} className="mr-2" />
               Profile
-            </Button>
+            </Button> */}
           </div>
         </div>
       )}
@@ -85,6 +85,6 @@ const NavItem = ({ icon, text, link }: NavItemProps) => (
     className="flex items-center text-gray-600 text-gray-900"
   >
     {icon}
-    <span className="ml-1 font-mono">{text}</span>
+    <span className="ml-1 font-serif">{text}</span>
   </Link>
 );

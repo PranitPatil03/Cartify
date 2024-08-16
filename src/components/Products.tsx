@@ -23,14 +23,21 @@ export const ProductCard = ({ product }: { product: product }) => {
         alt={product.name}
         className="w-full h-64 object-cover mb-4 rounded"
       />
-      <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
-      <p className="text-gray-600 mb-2">₹{product.price}</p>
-      <p className="text-sm text-gray-500 mb-4">{product.description}</p>
+      <h3 className="text-lg font-semibold text-gray-800 ">{product.name}</h3>
+      <p className="text-sm text-gray-500 mb-4 mt-1 font-serif">
+        {product.description}
+      </p>
+      <div className="flex flex-row gap-5">
+        <p className="text-gray-600 mb-4 text-xl font-serif font-semibold">
+          ₹{product.price}
+        </p>
+        <p className="text-gray-600 mb-4 text-lg line-through font-serif">
+          ₹{product.mrp}
+        </p>
+      </div>
       <Button
-        className={`w-full py-2 rounded transition-colors ${
-          isInCart
-            ? "bg-gray-200 text-gray-600 cursor-not-allowed"
-            : ""
+        className={`w-full py-2 rounded transition-colors font-serif ${
+          isInCart ? "bg-gray-200 text-gray-600 cursor-not-allowed" : ""
         }`}
         onClick={handleAddToCart}
         disabled={isInCart}
