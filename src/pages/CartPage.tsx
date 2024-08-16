@@ -11,23 +11,25 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const CartPage: React.FC = () => {
-  const { cartItems, updateQuantity, removeFromCart } = useCart();
+  const { cartItems, updateQuantity, removeFromCart, createOrder } = useCart();
 
   const calculateSubtotal = () =>
     cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const calculateTotalAfterDiscount = () => {
     const subtotal = calculateSubtotal();
-    const shipping = 100.0;
+    const shipping = subtotal > 0 ? 100.0 : 0;
     const tax = subtotal * 0.0832;
     const discount = subtotal * 0.1;
     return subtotal + shipping + tax - discount;
   };
 
-  const handleCheckout = () => {};
+  const handleCheckout = () => {
+    createOrder();
+  };
 
   return (
-    <div className="container mx-auto p-6 ">
+    <div className="container mx-auto p-6">
       <h1 className="text-2xl font-semibold mb-6 font-mono">Shopping Cart</h1>
       <div className="flex flex-col lg:flex-row">
         <div className="flex-1">
@@ -71,12 +73,11 @@ const CartPage: React.FC = () => {
                       <SelectValue placeholder="Qty" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">1</SelectItem>
-                      <SelectItem value="2">2</SelectItem>
-                      <SelectItem value="3">3</SelectItem>
-                      <SelectItem value="4">4</SelectItem>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="6">6</SelectItem>
+                      {[1, 2, 3, 4, 5, 6].map((num) => (
+                        <SelectItem key={num} value={num.toString()}>
+                          {num}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
 
@@ -104,7 +105,6 @@ const CartPage: React.FC = () => {
                   Subtotal
                 </span>
                 <span className="font-serif text-base font-medium rounded-xl">
-                  {" "}
                   ₹{calculateSubtotal().toFixed(2)}
                 </span>
               </div>
@@ -116,13 +116,6 @@ const CartPage: React.FC = () => {
                   {calculateSubtotal() <= 0 ? "₹0" : "₹100"}
                 </span>
               </div>
-              {/* <div className="flex justify-between mt-2">
-                <span className="px-3 py-2">Tax estimate</span>
-                <span className="px-3 py-2 rounded-xl ">
-                  {" "}
-                  ₹{(calculateSubtotal() * 0.0832).toFixed(2)}
-                </span>
-              </div> */}
               <div className="flex justify-between mt-2">
                 <span className="font-serif text-base font-medium">
                   Total Discount{" "}
@@ -131,8 +124,7 @@ const CartPage: React.FC = () => {
                   </span>
                 </span>
                 <span className="font-serif text-base font-medium rounded-xl">
-                  {" "}
-                  ₹{(Number(calculateSubtotal().toFixed(2)) * 0.1).toFixed(2)}
+                  ₹{(calculateSubtotal() * 0.1).toFixed(2)}
                 </span>
               </div>
               <hr className="border w-full mt-2"></hr>
@@ -141,7 +133,6 @@ const CartPage: React.FC = () => {
                   Total Amount
                 </span>
                 <span className="font-serif md:text-xl font-semibold rounded-xl">
-                  {" "}
                   ₹{calculateTotalAfterDiscount().toFixed(2)}
                 </span>
               </div>

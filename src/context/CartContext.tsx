@@ -1,16 +1,31 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { product } from "../types/types";
 
-interface CartItem extends product {
+interface CartItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  mrp: number;
+  image: string;
   quantity: number;
+}
+
+interface Order {
+  id: string;
+  items: CartItem[];
+  totalAmount: number;
+  date: Date;
 }
 
 interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (product: product) => void;
-  removeFromCart: (productId: number) => void;
-  updateQuantity: (productId: number, newQuantity: number) => void;
+  orders: Order[];
+  addToCart: (item: CartItem) => void;
+  removeFromCart: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
+  clearCart: () => void;
+  createOrder: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -18,50 +33,84 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
-    const storedCart = localStorage.getItem("cartItems");
-    return storedCart ? JSON.parse(storedCart) : [];
-  });
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    const storedCart = localStorage.getItem("cart");
+    const storedOrders = localStorage.getItem("orders");
+    if (storedCart) setCartItems(JSON.parse(storedCart));
+    if (storedOrders) setOrders(JSON.parse(storedOrders));
+  }, []);
+
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      localStorage.setItem("cart", JSON.stringify(cartItems));
+    } else {
+      localStorage.removeItem("cart");
+    }
   }, [cartItems]);
 
-  const addToCart = (product: product) => {
+  useEffect(() => {
+    if (orders.length > 0) {
+      localStorage.setItem("orders", JSON.stringify(orders));
+    } else {
+      localStorage.removeItem("orders");
+    }
+  }, [orders]);
+
+  const addToCart = (item: CartItem) => {
     setCartItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === product.id);
+      const existingItem = prevItems.find((i) => i.id === item.id);
       if (existingItem) {
-        return prevItems.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
+        return prevItems.map((i) =>
+          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
         );
       }
-      return [...prevItems, { ...product, quantity: 1 }];
+      return [...prevItems, { ...item, quantity: 1 }];
     });
   };
 
-  const removeFromCart = (productId: number) => {
+  const removeFromCart = (id: string) => {
+    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  };
+
+  const updateQuantity = (id: string, quantity: number) => {
     setCartItems((prevItems) =>
-      prevItems.filter((item) => item.id !== productId)
+      prevItems.map((item) => (item.id === id ? { ...item, quantity } : item))
     );
   };
 
-  const updateQuantity = (productId: number, newQuantity: number) => {
-    if (newQuantity < 1) {
-      removeFromCart(productId);
-    } else {
-      setCartItems((prevItems) =>
-        prevItems.map((item) =>
-          item.id === productId ? { ...item, quantity: newQuantity } : item
-        )
-      );
-    }
+  const clearCart = () => {
+    setCartItems([]);
+    localStorage.removeItem("cart");
+  };
+
+  const createOrder = () => {
+    const order: Order = {
+      id: new Date().toISOString(),
+      items: cartItems,
+      totalAmount: cartItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      ),
+      date: new Date(),
+    };
+    setOrders((prevOrders) => [...prevOrders, order]);
+    clearCart();
   };
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, updateQuantity }}
+      value={{
+        cartItems,
+        orders,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        createOrder,
+      }}
     >
       {children}
     </CartContext.Provider>
@@ -70,7 +119,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export const useCart = () => {
   const context = useContext(CartContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useCart must be used within a CartProvider");
   }
   return context;
